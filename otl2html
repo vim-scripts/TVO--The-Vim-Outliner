@@ -1,0 +1,175 @@
+#!/usr/bin/ruby
+# otl2html -- translate .otl files into simple HTML
+# OTL format:
+#
+# text lines have 0+ tabs, [|-*\s0-9]\s 
+#    /^\t*[-|* 0-9]+/
+#
+# header lines have 0+ tabs
+# headers may have <h> tags preceding
+# ones that begin with + are copied to final text output
+#
+# lists have additional indent of 2 spaces:
+# \t*-\sStuff
+# \t*\s\sMore stuff at same level
+#
+# ^!!!printOutline
+# id=anchorId
+# <url:stuff>
+# I<italic>
+# B<bold>
+# C<code>
+#
+# $Id: otl2html 99 2004-10-15 13:26:08Z ned $
+
+# state is :header, :list, :text, :listText
+$state = :header
+$level = 0
+$outlineToo = false
+
+def setLevel(tabs)
+  $level = tabs.length + 1
+  # $level = 4 if $level > 4
+end
+
+def newState(news)
+
+  #  print "|old=#{$state}|"
+  # leave old state
+  case $state
+  when :text
+    print "</p>\n" unless news == :text || news == :blankText
+  when :list
+    print "</li>\n" if news != :listText && news != :blankText
+    print "</ul>\n" if news != :list && news != :listText && news != :blankText
+  when :listText
+    # print "</p>\n" if news != :list
+    print "</p></li>\n" if news != :listText && news != :blankText
+    print "</ul>\n" if news != :listText && news != :list && news != :blankText
+  end
+
+  # print "|new=#{news}|"
+  # enter new one
+  case news
+  when :text
+    print "<p class=t#{$level}>" unless $state == :text
+  when :list
+    print "<ul class=t#{$level}>\n" if $state != :list && $state != :listText && $state != :blankText
+    print "<li class=t#{$level}><p class=t#{$level}>"
+  when :listText
+    print "<p class=t#{$level}>" if $state == :blankText
+  when :blankText
+    print '</p>' if $state == :text || $state == $listText
+  end
+
+  $state = news
+end
+
+print <<EOH
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN">
+
+<html>
+  <head>
+    <meta name="generator" content="Otl2HTML by Ned Konz">
+    <title>Outline file #{ARGV[0]}</title>
+    <style type="text/css">
+EOH
+
+cssname=ENV["OTLCSS"] || 'otl.css'
+
+if File.exist?(cssname)
+  print "<!-- using CSS file #{cssname} -->\n"
+  print File.open(cssname).read
+else
+print <<EOH
+body {
+  margin-left: 2em;
+  margin-right: 2em;
+  background: #eeeedd;
+  font-family: times new roman,new century schoolbook,century,times,serif
+}
+h1 { background: #88dddd; }
+h6 { font-size: 60%;
+display: list-item;
+margin-left: 5em;
+margin-right:10em;
+color: #aaaaaa;
+  font-family: arial,sans serif;
+margin-top:0;
+margin-bottom:0;
+}
+h6.h1 { margin-left: 5em; }
+h6.h2 { margin-left: 6em; }
+h6.h3 { margin-left: 7em; }
+h6.h4 { margin-left: 8em; }
+h6.h5 { margin-left: 9em; }
+
+pre {
+  margin-right: 0;
+  padding: 1em;
+  font-size: 60%;
+  background-color: #ddddee;
+  border-width: 1px;
+  border-style: solid;
+  white-space: pre;
+}
+code { font-size: 120% }
+EOH
+end
+
+print <<EOH
+    </style>
+  </head>
+  <body>
+EOH
+
+ARGF.each do |line|
+  line.chomp!
+  line.gsub!(/\bid=(\w+)/, "<a name=\"\\1\"></a>")
+  line.gsub!(/<url:([^>]*)>/i, "<a href=\"\\1\">(\\1)</a>" )
+  line.gsub!(/I<([^>]*)>/, "<i>\\1</i>")
+  line.gsub!(/B<([^>]*)>/, "<b>\\1</b>")
+  line.gsub!(/C<([^>]*)>/, "<code>\\1</code>")
+  case line
+  when /^!!!printOutline/
+    $outlineToo = true
+  when /^(\t*)\+(<[hH][0-9].*)/   # already-tagged header
+    setLevel($1)
+    newState(:header)
+    puts $2
+  when /^(\t*)\+([^|* 0-9<-].*)/# untagged header
+    setLevel($1)
+    newState(:header)
+    puts "<h#{$level}>#{$2}</h#{$level}>"
+  when /^\t*\+([-*])\s*(.*)/   # list top
+    newState(:list)
+    puts $2.gsub(/\t/, '&nbsp;&nbsp;')
+    puts('</p>');
+    newState(:listText)
+  when /^\t*[|]?\s*$/            # blank text line
+    newState(:blankText)
+  when /^\t*[ ]\s*$/            # blank list text
+    newState(:blankText)
+  when /^(\t*)([^|\t].*)?$/   # untagged hidden header
+    newState(:header)
+    setLevel($1)
+    puts("<h6 class=h#{$level}>#{$2}</h6>") if $outlineToo
+  when /^\t*\|\s([-*])\s*(.*)/   # list top
+    newState(:list)
+    puts $2.gsub(/\t/, '&nbsp;&nbsp;')
+  when /^\t*\|\s{2,}(.+)/         # wrapped list text
+    newState(:listText)
+    puts $1.gsub(/\t/, '&nbsp;&nbsp;')
+  when /^\t*[|] *(.+)/         # text
+    newState(:text)
+    puts $1.gsub(/\t/, '&nbsp;&nbsp;')
+  else
+    puts "!!!unrecognized #{line}"
+    exit 1
+  end
+end
+
+print <<EOF
+  </body>
+</html>
+EOF

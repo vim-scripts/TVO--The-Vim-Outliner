@@ -1,0 +1,98 @@
+TVO Installation
+$Id: INSTALL 85 2003-06-02 18:05:41Z ned $
+
+This is repeated in the README.otl file.
+
+Extracting the archive
+
+You will want to extract the distribution archive (.tar.gz or
+.zip) into the installation directory described below. Make sure
+that you use the directories in the file, because there are
+several files with the same filename in different directories:
+
+* MANIFEST
+* README.otl
+* doc/otl.txt
+* plugin/filetype_otl.vim
+* ftplugin/otl.vim
+* syntax/otl.vim
+* bitmaps/TVO/*.xpm    (under Unix)
+* bitmaps/TVO/*.bmp    (under Windows or Mac)
+
+Installing in a local or global .vim directory
+
+You will want to install TVO into a directory in your Vim
+runtimepath :he 'runtimepath'. Type the command
+
+:set runtimepath
+
+To find out what it is set to. This will display a list of
+directories separated by commas. On my Linux system, these
+directories are:
+
+  ~/.vim
+  /usr/local/share/vim/vimfiles
+  /usr/local/share/vim/vim60
+  /usr/local/share/vim/vimfiles/after
+  ~/.vim/after
+
+I installed TVO into my ~/.vim directory.
+
+I could have also installed it so it would be available to all the
+users on my system by putting it into either the
+/usr/local/share/vim/vimfiles or /usr/local/share/vim/vim60
+directories.
+
+Installing the binaries
+
+I've included some scripts in Perl and Ruby that I use for
+conversion of .otl files to HTML, RTF, and Perl POD. There is also
+a pod2otl converter.
+
+You can move these to a directory on your path (you may also have
+to change the shebang (#!) lines).
+
+Installing the help file
+
+TVO comes with a help file doc/otl.txt. See the Vim help:
+
+  :he add-local-help.
+
+After you've put this help file into a 'doc' directory under one
+of the directories on your 'runtimepath', use :he :helptags:
+
+  :helptags ~/.vim/doc
+
+(substitute the name of the directory where you put the otl.txt
+file).
+
+Now you can use the help to find out more about tvo.
+
+  :he tvo
+
+My .vimrc settings
+
+	" defaults:
+	let otl_install_menu=1
+	let no_otl_maps=0
+	let no_otl_insert_maps=0
+
+	" overrides:
+	let otl_bold_headers=0
+	let otl_use_thlnk=0
+
+	" au BufWinLeave *.otl mkview
+	" au BufWinEnter *.otl silent loadview
+	let maplocalleader = ","
+
+
+Overriding TVO settings
+
+You can make changes to the way that TVO starts up by making a file called
+after/ftplugin/otl.vim under your ~/.vim directory (see above about runtimepath)
+(on my system it would be called ~/.vim/after/ftplugin/otl.vim).
+
+For instance, if you want to make it so that you open outlines showing only the
+first level, you could put in that file
+
+	set foldlevel=0

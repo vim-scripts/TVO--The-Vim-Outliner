@@ -1,0 +1,54 @@
+#! /usr/bin/ruby
+# Converts TVO format to .rtf
+#
+# $Id: otl2rtf 90 2003-09-09 15:32:23Z ned $
+#
+# -> level 1
+# print '\pard\s1\sb240\sa60\b\f0\fs28 ', line, '\par'
+# -> level 2
+# print '\pard\s2\sb240\sa60\i\fs24 '
+# print paragraph
+# print line, '\par'
+# -> text at level 2
+# print '\pard\b0\i0\f1 '
+# -> text at level 1
+
+# print header
+$stdout.print '{\rtf1\ansi\ansicpg1252\deff0\deflang1033{\fonttbl{\f0\fswiss\fcharset0 Arial;}{\f1\fnil\fcharset0 Times New Roman;}}
+{\stylesheet{ Normal;}{\s1 Heading 1;}{\s2 Heading 2;}{\s3 Heading 3;}{\s4 Heading 4;}{\s5 Heading 5;}}
+\viewkind4\uc1'
+
+lastLevel = -1
+level = -1
+lastText = false
+text = false
+
+ARGF.each do |line|
+  line.chomp!
+
+  if /^(\t*)/.match(line) 
+    level = $1.length
+    if level >= 1
+      line[0 .. level - 1] = ''
+    end
+  else
+    level = 0
+  end
+
+  if /^[-*|0-9] /.match(line)
+    line.sub!(/^\| /, '')
+    print '\pard\b0\f1 '
+    text = true
+  else
+    if level != lastLevel || text != lastText
+      $stdout.print '\pard\s', level + 1, '\sb240\sa60\b\f0 '
+      lastLevel = level
+      lastText = text
+    end
+    text = false
+  end
+  print line, "\\par\r\n"
+end
+
+# print footer
+$stdout.print "}\r\n\000"
