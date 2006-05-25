@@ -1,10 +1,15 @@
 @echo off
 REM Install TVO.
+REM
+REM Does nothing that unzipping the TVO zip into the correct place
+REM and then firing up Vim on the README.otl file wouldn't do.
+REM
 REM Assumes this is being run from the directory where TVO got unpacked to.
 
-REM Where Vim got installed to
+REM Change these two lines to point to where you installed Vim and what
+REM version you have installed.
 set VIM=c:\vim
-set VIMVERSION=62
+set VIMVERSION=64
 
 REM where TVO gets copied to
 set TVO=%VIM%\vimfiles

@@ -1,5 +1,5 @@
 TVO: The Vim Outliner
-| $Id: README.otl 110 2006-03-14 02:00:20Z ned $
+| $Id: README.otl 121 2006-05-16 01:51:54Z ned $
 | Note: Things that aren't done yet are marked as TODO.
 	Background
 	| I've used outliners for years to brainstorm and edit text. With
@@ -22,7 +22,7 @@ TVO: The Vim Outliner
 	| all but the first line in a group of lines.
 	|
 	| Another is changing the folding behavior of Vim to do the expected
-	| outline nexting.
+	| outline nesting.
 	|
 	| By itself, Vim doesn't work quite right as an outliner. So I added
 	| a foldexpr() routine to make folding work right. This defines text
@@ -54,7 +54,7 @@ TVO: The Vim Outliner
 	| that file tells Vim where to jump to.
 	|
 	| If you install the Viki script
-	| (http://www.vim.org/scripts/script.php?script_id=861) you will
+	| [http://www.vim.org/scripts/script.php?script_id=861] you will
 	| have live links to URLs as well as the ability to define links
 	| between TVO files just by using a WikiName (capitalized word with
 	| internal caps) and navigating using a <C-]> or
@@ -76,11 +76,9 @@ TVO: The Vim Outliner
 		| [:he tags]
 		| 
 		| If you jump to a regular tag (as opposed to a file or to a Vim
-		| command reference) you can jump back using ctrl-T [:he
-		| ctrl-T]. If you jumped to a file, you can jump back using :e #
-		| or ctrl-^ [:he ctrl-^].
-		|
-		| TODO ctrl-T will later jump back from other files as well.
+		| command reference) you can jump back using the usual ctrl-O
+		| [:he ctrl-O] or ctrl-T [:he ctrl-T] commands. If you jumped to a
+		| file, you can jump back using :e # or ctrl-^ [:he ctrl-^].
 		Jumping to tags
 		| You can jump from one outline to a specified point in the same
 		| or another outline by using the ctrl-] key, or by the "Jump to
@@ -125,61 +123,12 @@ TVO: The Vim Outliner
 		| * Set it in your own .vimrc
 Deplate support
 Upgrading
-	| Follow the installation instructions below, but remove any
-	| plugin/filetype_otl.vim files from prior installations.
-	| Also remove anything TVO-related from your filetype.vim file, if
-	| any.
+| Follow the installation instructions below, but remove any
+| plugin/filetype_otl.vim files from prior installations.
+| Also remove anything TVO-related from your filetype.vim file, if
+| any.
 Installation
-	Extracting the archive
-	| You will want to extract the distribution archive (.tar.gz or
-	| .zip) into the installation directory described below. Make sure
-	| that you use the directories in the file, because there are
-	| several files with the same filename in different directories:
-	| * [MANIFEST]
-	| * [README.otl]
-	| * [doc/otl.txt]
-	| * [ftdetect/otl.vim]
-	| * [ftplugin/otl.vim]
-	| * [syntax/otl.vim]
-	| * bitmaps/TVO/*.xpm    (under Unix)
-	| * bitmaps/TVO/*.bmp    (under Windows or Mac)
-	Installing in a local or global .vim directory
-	| You will want to install TVO into a directory in your Vim
-	| runtimepath [:he 'runtimepath']. Type the command
-	| 
-	| [:set runtimepath]
-	| 
-	| To find out what it is set to. This will display a list of
-	| directories separated by commas. On my Linux system, these
-	| directories are:
-	|
-	| ~/.vim
-	| /usr/local/share/vim/vimfiles
-	| /usr/local/share/vim/vim60
-	| /usr/local/share/vim/vimfiles/after
-	| ~/.vim/after
-	| 
-	| I installed TVO into my ~/.vim directory.
-	| 
-	| I could have also installed it so it would be available to all the
-	| users on my system by putting it into either the
-	| /usr/local/share/vim/vimfiles or /usr/local/share/vim/vim60
-	| directories.
-	Installing the binaries
-	| I've included some scripts in Perl and Ruby that I use for
-	| conversion of .otl files to HTML, RTF, and Perl POD. There is also
-	| a pod2otl converter.
-	| You can move these to a directory on your path (you may also have
-	| to change the shebang (#!) lines).
-	Installing the help file
-	| TVO comes with a help file [doc/otl.txt] [:he add-local-help].
-	| After you've put this help file into a 'doc' directory under one
-	| of the directories on your 'runtimepath', use [:he :helptags]:
-	|    [:helptags ~/.vim/doc]
-	| (substitute the name of the directory where you put the otl.txt
-	| file).
-	| Now you can use the help to find out more about tvo.
-	|   [:he tvo]
+| Please read the file INSTALL for directions on how to install TVO.
 Configuring the outliner
 	Changing the colors
 	Changing the tab stops
@@ -240,6 +189,22 @@ Contents of an outline
 	|   will appear offset.
 	| * The "*" character also introduces items that will appear
 	|   with a hanging indent. 
+	Markup
+	| You can markup various pieces of text using:
+	|
+	| <html:I<italic>>
+	|
+	| I<italic>
+	|
+	| <html:B<bold>>
+	|
+	| B<bold>
+	|
+	| <html:C<code>>
+	|
+	| C<code>
+	|
+	| <html:<html:stuff for html output>>
 Using TVO
 License
 Hyperlinks
@@ -385,7 +350,7 @@ Contacting the author
 | You can reach me at ned@bike-nomad.com . I would appreciate hearing
 | about bugs, suggestions, or just about how you're using this. Thanks!
 |
-| http://www.bike-nomad.com
+| [http://www.bike-nomad.com]
 |
 | (modeline:) 
 | vim: tw=72 ts=3 sw=3 fo-=t foldlevel=10

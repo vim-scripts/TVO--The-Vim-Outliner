@@ -2,9 +2,9 @@
 " Functions, mappings, and macros that implement an outliner similar to
 " WinWord
 "
-" $Id: otl.vim 111 2006-03-20 01:31:47Z ned $
+" $Id: otl.vim 122 2006-05-19 01:12:32Z ned $
 "
-" Maintainer: Ned Konz <vim@bike-nomad.com>
+" Maintainer: Ned Konz <ned@bike-nomad.com>
 "
 " Uses marks o and p
 "
@@ -77,57 +77,16 @@ if exists('*VikiMinorMode')
   call s:OtlDefaultGlobalVar("otl_viki_anchor_marker", "'#'")
 
   call s:OtlDefaultGlobalVar("otl_viki_comment_string", "'.*\[\[%s]]'")
+else
+  let g:otl_use_viki = 0
 endif
 
 " set g:otl_use_thlnk to 0 if Thlnk is installed but you don't want to use it
 call s:OtlDefaultGlobalVar("otl_use_thlnk", exists('*Thlnk_processUrl'))
 
-
 if g:otl_use_viki
   " prefer Viki to Thlnk
   let g:otl_use_thlnk = 0
-
-" These functions will be called by Viki for the TVO Viki family
-" (see doc/viki.txt)
-
-  " Comment out if not debugging
-  " breakadd func Viki*TVO
-
-  " state is 0, +/-1, +/-2
-  " 0 is disabled (not yet supported)
-  " 1 is VikiMinorMode, -1 is VikiMinorModeMaybe
-  " 2 is, -2 is
-  " otherwise, calls these functions with state:
-  "   VikiSetupBufferTVO
-  "   VikiDefineMarkupTVO
-  "   VikiDefineHighlightingTVO
-  "   VikiMapKeysTVO
-  fun! VikiMinorModeTVO(state)
-"    if exists('b:vikiFamily')
-"      if b:vikiFamily == 'TVO'
-"        return
-"      endif
-"    endif
-    call VikiSetBufferVar('vikiNameTypes', 'g:otl_viki_name_types')
-    let b:vikiNameSuffix='.otl'
-    let b:vikiFamily='TVO'
-    let nCCRMap = maparg("<C-CR>", "n")
-    let iCCRMap = maparg("<C-CR>", "i")
-    if exists('b:vikiEnabled')
-      call VikiDefineMarkup(a:state)
-    else
-      call VikiMinorMode(-1)
-    endif
-    " Restore Viki overrides
-    if nCCRMap != ''
-      execute "nnoremap <buffer><silent><script> <C-CR> " nCCRMap
-    endif
-    if iCCRMap != ''
-      execute "inoremap <buffer><silent><script> <C-CR> " iCCRMap
-    endif
-    " use Viki map for ,<c-cr>
-    nnoremap <buffer> <silent> <LocalLeader><c-cr> :call VikiMaybeFollowLink(0,1,)<cr>
-  endfun
 
   "" Called by VikiMinorModeTVO()
   "
@@ -178,47 +137,10 @@ if g:otl_use_viki
   fun! VikiSetupBufferTVO(state, ...)
     let dontSetup = a:0 > 0 ? a:1 : ""
     call VikiSetupBuffer(a:state, dontSetup)
-  endfun
-
-  fun! VikiDefineMarkupTVO(state)
     call VikiDefineMarkup(a:state)
-    let b:vikiAnchorRx = '\[\[\s*%{ANCHOR}\s*]]'
+    let b:vikiAnchorRx = '[[\s\*%{ANCHOR}\s\*]]'
     call VikiSetBufferVar('vikiAnchorMarker', 'g:otl_viki_anchor_marker')
     let b:vikiCommentStart = '\t*'
-  endfun
-
-  fun! VikiDefineHighlightingTVO(state, ...)
-    let dontSetup = a:0 > 0 ? a:1 : ""
-    call VikiDefineHighlighting(a:state)
-  endfun
-
-  fun! VikiMapKeysTVO(state)
-    return VikiMapKeys(a:state)
-  endfun
-
-  "" Other functions
-  " defs are name/dest/anchor/part joined by g:vikiDefSep
-  " see multvals.vim for utils to deal with these.
-
-  fun! VikiCompleteSimpleNameDefTVO(def)
-    return VikiCompleteSimpleNameDef(a:def)
-  endfun
-
-  fun! VikiCompleteExtendedNameDefTVO(def)
-    return VikiCompleteExtendedNameDef(a:def)
-  endfun
-
-  fun! VikiCompleteCmdDefTVO(def)
-    return VikiCompleteCmdDef(a:def)
-  endfun
-
-  fun! VikiFindAnchorTVO(anchor)
-    return VikiFindAnchor(a:anchor)
-  endfun
-
-  " flag is "" for FindNext, "b" for FindPrev
-  fun! VikiFindTVO(flag)
-    return VikiFind(a:flag)
   endfun
 
 endif
@@ -397,7 +319,9 @@ if !exists("s:otl_loaded_functions")
   function s:OtlDoubleClick()
     execute s:OtlBracketTagAndModeAtCursor()
     if tag == ""
-      normal! za
+      if foldlevel(".") > 0
+        normal! za
+      endif
     else
       call s:OtlTagJump()
     endif
@@ -1047,7 +971,11 @@ if !exists("s:otl_loaded_functions")
     " Now set up the minor mode (will be short-circuited after initially
     " setup)
     if g:otl_use_viki
-      call VikiMinorModeTVO(1)
+      call VikiSetBufferVar('vikiNameTypes', 'g:otl_viki_name_types')
+      let b:vikiNameSuffix='.otl'
+      let b:vikiFamily='TVO'
+      let b:vikiMapFunctionalityMinor = substitute(g:vikiMapFunctionalityMinor, '\Cc', '', 'g')
+      VikiMinorMode
     endif
 
   endfunction

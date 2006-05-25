@@ -1,3 +1,21 @@
+v122 (25 May 2006)
+
+Fixed Viki integration (with fixes from Thomas Link)
+
+Changed email address in ftplugin/otl.vim
+
+Defaulted g:otl_use_viki
+
+Made double-click conditional on having a fold
+
+Added variable g:otl_highlight_extensions to make TODO, XXX, NOTE highlighting configurable
+
+Improved installation directions in README.otl
+
+v111 (19 March 2006)
+
+Made settings work right for the first file
+
 v108 (13 March 2006)
 
 Added global g:otl_initial_foldlevel to set preferred folding level for .otl files

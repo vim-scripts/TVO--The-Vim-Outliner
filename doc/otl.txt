@@ -2,7 +2,7 @@
 TVO: The Vim Outliner
 
 Maintainer: Ned Konz <vim@bike-nomad.com>
-Documentation version: $Id: otl.txt 109 2006-03-13 20:52:07Z ned $
+Documentation version: $Id: otl.txt 121 2006-05-16 01:51:54Z ned $
 
 Contents:
   Introduction  |tvo-intro|
@@ -198,49 +198,58 @@ Settings:                                                     *tvo-settings*
 
 These can be set in your .vimrc file to change the default behavior of TVO:
 
-Turn off bold headers:
-  let otl_bold_headers = 0
+Turn off bold headers (useful if you find the colors too dark in a color
+terminal):
+  let g:otl_bold_headers = 0
 
 Don't install TVO menu:
-  let otl_install_menu = 0
+  let g:otl_install_menu = 0
 
 Don't install TVO toolbar buttons:
-  let otl_install_toolbar = 0
+  let g:otl_install_toolbar = 0
 
-Don't install any TVO mappings:
-  let no_otl_maps = 1
+Don't install any TVO keyboard mappings:
+  let g:no_otl_maps = 1
 
 Install TVO mapping of <Tab> and <Shift-Tab> to demote/promote (default=0):
-  let otl_map_tabs = 1
+  let g:otl_map_tabs = 1
 
 Don't install TVO insert mode mappings:
-  let no_otl_insert_maps = 1
+  let g:no_otl_insert_maps = 1
 
 Start out in text view:
-  let otl_text_view = 1
+  let g:otl_text_view = 1
 
 Set default initial foldlevel (default=9)
-  let otl_initial_foldlevel=9
+Note that you can override this in a modeline in an .otl file
+  let g:otl_initial_foldlevel=9
 
-Set g:otl_use_viki to 0 if Viki is installed but you don't want to use it
-  let otl_use_viki=1
+If you have installed Viki:
 
-Set g:otl_viki_name_types to the default Viki name types that you want to use
-(see viki.txt)
-  s Simple viki name
-  c CamelCase
-  S simple, quoted viki name
-  i interviki
-  u URL
+  Set g:otl_use_viki to 0 if Viki is installed but you don't want to use it
+    let g:otl_use_viki=1
 
-  let otl_viki_name_types='csSeui'
-  let otl_viki_anchor_marker='#'
-  let otl_viki_comment_string='.*\[\[%s]]'
+  Set g:otl_viki_name_types to the default Viki name types that you want to use
+  (see viki.txt)
+    s Simple viki name
+    c CamelCase
+    S simple, quoted viki name
+    i interviki
+    u URL
+
+    let otl_viki_name_types='csSeui'
+
+    let otl_viki_anchor_marker='#'
+
+    let otl_viki_comment_string='.*\[\[%s]]'
 
 Don't use |thlnk| even if it exists:
-  let otl_use_thlnk = 0
+  let g:otl_use_thlnk = 0
 
 Change the key prefix for TVO mappings |tvo-mappings| (in this example, to a comma):
   let maplocalleader = ","
  
+
+
+
 " vim: ft=help tw=78 ts=2 et

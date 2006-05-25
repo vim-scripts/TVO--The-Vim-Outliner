@@ -1,6 +1,6 @@
 " Syntax highlighting for outliner.
 " Maintainer: Ned Konz <vim@bike-nomad.com>
-" $Id: otl.vim 104 2005-01-25 20:36:38Z ned $
+" $Id: otl.vim 120 2006-05-16 00:59:52Z ned $
 "
 syn cluster vikiHyperLinks contains=vikiLink,vikiExtendedLink,vikiURL,vikiInexistentLink
 
@@ -15,7 +15,6 @@ syn match otlTab3 /^\t\{3}[^\t|].*/       contains=@vikiHyperLinks,otlTodo,otlTa
 syn match otlTab2 /^\t\{2}[^\t|].*/       contains=@vikiHyperLinks,otlTodo,otlTagDef,otlTagRef display nextgroup=otlTab2,otlTab3,otlTab1,otlText
 syn match otlTab1 /^\t\{1}[^\t|].*/       contains=@vikiHyperLinks,otlTodo,otlTagDef,otlTagRef display nextgroup=otlTab1,otlTab2,otlTab0,otlText
 syn match otlTab0 /^[^\t|].*/             contains=@vikiHyperLinks,otlTodo,otlTagDef,otlTagRef display nextgroup=otlTab0,otlTab1,otlText
-syn match otlTodo /\<\(TODO\|XXX\|NOTE\)\>/    contained
 syn match otlTextLeader /^\t*|/   contained
 
 if exists("g:otl_use_viki") && g:otl_use_viki
@@ -24,6 +23,12 @@ if exists("g:otl_use_viki") && g:otl_use_viki
 else
   syn match otlTagRef  /<[Uu][Rr][Ll]:[^>]\+>\|\[[^]]*]/    contained
   syn match otlTagDef  /\<[Ii][Dd]=\w\+>\|\[\[[^]]*]]/      contained
+end
+
+if exists("g:otl_highlight_extensions") && g:otl_highlight_extensions
+  syn match otlTodo /\<\(TODO\|XXX\|NOTE\)\>\|\*\*\s*[^*]\+\s*\*\*/    contained
+else
+  syn match otlTodo /\<\(TODO\|XXX\|NOTE\)\>/    contained
 end
 
 if &background == "dark"
